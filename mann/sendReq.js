@@ -1,5 +1,4 @@
 import { GoogleGenAI } from "@google/genai";
-import mongoose from "mongoose";
 import Startup from "./models/startupModel.js";
 import dotenv from "dotenv";
 
@@ -88,11 +87,24 @@ Last Updated: ${
   return startupProfile;
 }
 
-export default async function chat() {
+async function retrieveStartup(startupID) {
+  try {
+    const startup = await Startup.findById(id);
+    if (!startup) {
+      return res.status(404).json({ message: "Startup not found" });
+    }
+    // Use the startup
+  } catch (error) {
+    console.error("Error finding startup:", error);
+    return res.status(500).json({ message: "Server error" });
+  }
+}
+
+export default async function askQuestion(prompt, startupID) {
   //var startupId = req.body.startupID;
-  var startupData = await getAllStartups();
+  var startupData = await getAllStartups(); //get all startups from db
   var startup = startupData[0];
-  var prompt = parseStartupForGemini(startup);
+  var history_prompt = parseStartupForGemini(startup);
   console.log(prompt);
   var llmHistory = [
     {
@@ -109,13 +121,13 @@ export default async function chat() {
     },
     {
       role: "user",
-      parts: [{ text: prompt }],
+      parts: [{ text: history_prompt }],
     },
     {
       role: "model",
       parts: [
         {
-          text: "perfect, this is the details about the strtup, you can now ask me anything about it and i will reply correctly",
+          text: "perfect, you can now ask me anything about it and i will reply correctly",
         },
       ],
     },
@@ -126,7 +138,8 @@ export default async function chat() {
   });
 
   const response = await chat.sendMessage({
-    message: "what is startup title",
+    message: prompt,
   });
-  console.log(response.text);
+  // console.log("gem response", response.text);
+  return response.text;
 }
