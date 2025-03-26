@@ -1,3 +1,4 @@
 ./mann/env
 /mann/node_modules/*
 .DS_Store
+/mann/.env
