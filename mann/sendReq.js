@@ -5,17 +5,6 @@ import dotenv from "dotenv";
 dotenv.config();
 const ai = new GoogleGenAI({ apiKey: process.env.GEMINI_API_KEY });
 
-async function getAllStartups() {
-  // will get startup info somehow
-  try {
-    const startups = await Startup.find();
-    return startups;
-  } catch (error) {
-    console.error("Error fetching startups:", error);
-    return [];
-  }
-}
-
 /**
  * Parses startup data into a structured string for LLM processing
  * @param {Object} startup - The startup document from MongoDB
@@ -87,24 +76,23 @@ Last Updated: ${
   return startupProfile;
 }
 
-async function getStartup(startupId) {
+export async function getStartup(startupId) {
   try {
     const startup = await Startup.findById(startupId);
-    console.log("strartup?.category", startup.category);
     // console.dir("startup found: ", startup);
     if (!startup) {
-      return res.status(404).json({ message: "Startup not found" });
+      return {};
     }
     return startup;
   } catch (error) {
     console.error("Error finding startup:", error);
-    return res.status(500).json({ message: "Server error" });
+    return {};
   }
 }
 
-export default async function askQuestion(prompt, startupId) {
+export async function askQuestion(prompt, startup) {
   //var startupId = req.body.startupID;
-  var startup = await getStartup(startupId);
+  // var startup = await getStartup(startupId);
   // var startupData = await getAllStartups(); //get all startups from db
   // var startup = startupData[0];
   var history_prompt = parseStartupForGemini(startup);

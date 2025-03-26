@@ -3,7 +3,8 @@ import dotenv from "dotenv";
 import express from "express";
 import path from "path";
 import { fileURLToPath } from "url";
-import askQuestion from "./sendReq.js";
+import { getStartup, askQuestion } from "./sendReq.js";
+import Startup from "./models/startupModel.js";
 
 dotenv.config();
 connectDB();
@@ -21,10 +22,25 @@ app.set("views", path.join(__dirname, "views"));
 app.use(express.static(path.join(__dirname, "public")));
 app.use(express.json());
 // Home route
-app.get("/", (req, res) => {
-  res.render("index");
+app.get("/", async (req, res) => {
+  try {
+    const allStartups = await Startup.find();
+    res.render("explore", { allStartups });
+  } catch (error) {
+    console.error("Error fetching startups:", error);
+    res.status(500).send("Error loading startups");
+  }
 });
-``;
+app.get("/chat/:startupId", async (req, res) => {
+  try {
+    const startupId = req.params.startupId;
+    const startup = await getStartup(startupId);
+    console.log("stat", startup);
+    res.render("chat", { startup });
+  } catch (err) {
+    console.log("errrrrrr");
+  }
+});
 app.get("/loader.gif", (req, res) => {
   res.sendFile("img/loader.gif");
 });
@@ -37,8 +53,8 @@ app.post("/askQuestion", async (req, res) => {
     if (!userInput || !startupId) {
       return res.status(400).json({ error: "Invalid request body" });
     }
-
-    const response = await askQuestion(userInput, startupId);
+    var startup = await getStartup(startupId);
+    const response = await askQuestion(userInput, startup);
     // console.log("response from gemini : ",  response);
     res.json({ response });
   } catch (error) {

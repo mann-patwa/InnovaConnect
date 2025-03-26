@@ -9,6 +9,7 @@ async function sendMessage() {
   userInput.value = ""; // Clear input field
   //   console.log("manna", userMessage);
   try {
+    chatHistory.innerHTML += `<div class="user-message">${userMessage}</div>`;
     const response = await fetch("/askQuestion", {
       method: "POST",
       headers: {
@@ -18,18 +19,14 @@ async function sendMessage() {
     });
 
     const data = await response.json();
-    console.log(data);
     const botMessage = data.response;
-    console.log("bot", botMessage);
-    // Add chat message to the chat history
-    chatHistory.innerHTML += `<div class="user-message">${userMessage}</div>`;
+
     chatHistory.innerHTML += `<div class="bot-message">${botMessage}</div>`;
 
     // Scroll to the bottom of the chat history
     chatHistory.scrollTop = chatHistory.scrollHeight;
   } catch (error) {
     console.error("Error:", error);
-    // Handle errors gracefully, e.g., display an error message to the user
   }
 }
 

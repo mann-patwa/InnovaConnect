@@ -9,13 +9,13 @@
 </head>
 <body>
    <div id="chat-container">
-        <h1>Coding Money Chatbot</h1>
+        <h1><%= startup.title %></h1>
         <div id="chat-history"></div>
-        <form id="chat-form" value = "67e39f510ff90462e4baf6c0">  
+        <form id="chat-form" value = <%= startup._id %>>  
             <!-- make sure to keep this value field for getting startup id from the frontend to pas in the backend -->
             <!-- probably have to keep value = allStartups[i]._id -->
             <input type="text" id="user-input" placeholder="Enter your message">
-            <button type="submit"  >Send</button>
+            <button type="submit" >Send</button>
         </form>
     </div>
     <div id="loader">
@@ -23,6 +23,6 @@
     </div> 
     
 
-    <script src="/js/script.js"></script>
+    <script src="/js/chat.js"></script>
 </body>
 </html>
