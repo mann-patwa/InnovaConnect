@@ -1,9 +1,11 @@
 const chatHistory = document.getElementById("chat-history");
 const userInput = document.getElementById("user-input");
 const form = document.getElementById("chat-form");
-
+// import askQuestion from "../../sendReq";
 async function sendMessage() {
   const userMessage = userInput.value;
+  const startupId = form.attributes.value.value;
+  console.log("form:", startupId);
   userInput.value = ""; // Clear input field
   //   console.log("manna", userMessage);
   try {
@@ -12,7 +14,7 @@ async function sendMessage() {
       headers: {
         "Content-Type": "application/json",
       },
-      body: JSON.stringify({ userInput: userMessage }),
+      body: JSON.stringify({ userInput: userMessage, id: startupId }),
     });
 
     const data = await response.json();

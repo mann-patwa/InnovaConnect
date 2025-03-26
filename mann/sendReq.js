@@ -87,25 +87,28 @@ Last Updated: ${
   return startupProfile;
 }
 
-async function retrieveStartup(startupID) {
+async function getStartup(startupId) {
   try {
-    const startup = await Startup.findById(id);
+    const startup = await Startup.findById(startupId);
+    console.log("strartup?.category", startup.category);
+    // console.dir("startup found: ", startup);
     if (!startup) {
       return res.status(404).json({ message: "Startup not found" });
     }
-    // Use the startup
+    return startup;
   } catch (error) {
     console.error("Error finding startup:", error);
     return res.status(500).json({ message: "Server error" });
   }
 }
 
-export default async function askQuestion(prompt, startupID) {
+export default async function askQuestion(prompt, startupId) {
   //var startupId = req.body.startupID;
-  var startupData = await getAllStartups(); //get all startups from db
-  var startup = startupData[0];
+  var startup = await getStartup(startupId);
+  // var startupData = await getAllStartups(); //get all startups from db
+  // var startup = startupData[0];
   var history_prompt = parseStartupForGemini(startup);
-  console.log(prompt);
+  // console.log(prompt);
   var llmHistory = [
     {
       role: "user",

@@ -32,12 +32,13 @@ app.post("/askQuestion", async (req, res) => {
   try {
     // console.dir(req.body);
     const userInput = req.body.userInput;
+    const startupId = req.body.id;
     // console.log("incoming /chat req", userInput);
-    if (!userInput) {
+    if (!userInput || !startupId) {
       return res.status(400).json({ error: "Invalid request body" });
     }
 
-    const response = await askQuestion(userInput);
+    const response = await askQuestion(userInput, startupId);
     // console.log("response from gemini : ",  response);
     res.json({ response });
   } catch (error) {
